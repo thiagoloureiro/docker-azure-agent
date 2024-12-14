@@ -38,8 +38,8 @@ ENV AZP_TOKEN=""
 ENV AZP_AGENT_NAME="docker-agent"
 ENV AZP_POOL="Default"
 
-# Run the configuration script when the container starts
-ENTRYPOINT ["./config.sh"]
+# Use environment variables in the ENTRYPOINT for agent configuration
+ENTRYPOINT ["./config.sh", "--unattended", "--url", "${AZP_URL}", "--auth", "pat", "--token", "${AZP_TOKEN}", "--agent", "${AZP_AGENT_NAME}", "--pool", "${AZP_POOL}"]
 
-# Command to run the Azure DevOps agent after configuring it
+# Default command to run the Azure DevOps agent after configuring it
 CMD ["./run.sh"]
