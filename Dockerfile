@@ -1,45 +1,22 @@
-# Use Ubuntu as the base image
 FROM ubuntu:latest
+ENV TARGETARCH="linux-x64"
+# Also can be "linux-arm", "linux-arm64".
 
-# Install dependencies and tools
-RUN apt-get update && apt-get install -y \
-    bash \
-    jq \
-    curl \
-    docker.io \
-    libicu-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt update
+RUN apt upgrade -y
+RUN apt install -y curl git jq libicu70
 
-# Upgrade all installed packages
-RUN apt-get update && apt-get upgrade -y
+WORKDIR /azp/
 
-# Create a non-root user 'agent' with a home directory and set the shell
-RUN useradd -m -s /bin/bash agent
+COPY ./start.sh ./
+RUN chmod +x ./start.sh
 
-# Add the 'agent' user to the 'docker' group (no need to create the docker group)
-RUN usermod -aG docker agent
+# Create agent user and set up home directory
+RUN useradd -m -d /home/agent agent
+RUN chown -R agent:agent /azp /home/agent
 
-# Download and install the Azure DevOps agent
-RUN mkdir /azp \
-    && curl -Ls https://vstsagentpackage.azureedge.net/agent/3.248.0/vsts-agent-linux-x64-3.248.0.tar.gz | tar -xz -C /azp
-
-# Change ownership of the agent directory to the 'agent' user
-RUN chown -R agent:agent /azp
-
-# Set the working directory to the agent installation directory
-WORKDIR /azp
-
-# Switch to the 'agent' user for the rest of the operations
 USER agent
+# Another option is to run the agent as root.
+# ENV AGENT_ALLOW_RUNASROOT="true"
 
-# Set environment variables for the agent configuration (these will need to be set at runtime)
-ENV AZP_URL=""
-ENV AZP_TOKEN=""
-ENV AZP_AGENT_NAME="docker-agent"
-ENV AZP_POOL="Default"
-
-# Use environment variables in the ENTRYPOINT for agent configuration
-ENTRYPOINT ["./config.sh", "--unattended", "--url", "${AZP_URL}", "--auth", "pat", "--token", "${AZP_TOKEN}", "--agent", "${AZP_AGENT_NAME}", "--pool", "${AZP_POOL}"]
-
-# Default command to run the Azure DevOps agent after configuring it
-CMD ["./run.sh"]
+ENTRYPOINT [ "./start.sh" ]
