@@ -1,9 +1,15 @@
 # Use Alpine Linux as the base image
-FROM alpine:latest
+FROM ubuntu:latest
 
 # Install dependencies and tools
-RUN apk add --no-cache bash jq curl docker
-RUN apk update && apk upgrade
+RUN apt-get update && apt-get install -y \
+    bash \
+    jq \
+    curl \
+    docker.io \
+    && rm -rf /var/lib/apt/lists/*
+    
+RUN apt-get update && apt-get upgrade -y
 
 # Create a non-root user 'agent' and set as the user for running the agent
 RUN adduser -D -u 1000 agent
