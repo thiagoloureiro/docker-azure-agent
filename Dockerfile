@@ -1,4 +1,4 @@
-# Use Alpine Linux as the base image
+# Use Ubuntu as the base image
 FROM ubuntu:latest
 
 # Install dependencies and tools
@@ -8,11 +8,15 @@ RUN apt-get update && apt-get install -y \
     curl \
     docker.io \
     && rm -rf /var/lib/apt/lists/*
-    
+
+# Upgrade all installed packages
 RUN apt-get update && apt-get upgrade -y
 
-# Create a non-root user 'agent' and set as the user for running the agent
-RUN adduser -D -u 1000 agent
+# Create a non-root user 'agent' with a home directory and set the UID to 1000
+RUN useradd -m -u 1000 -s /bin/bash agent
+
+# Install Docker group and add the agent user to the docker group to allow Docker access
+RUN groupadd docker && usermod -aG docker agent
 
 # Download and install the Azure DevOps agent
 RUN mkdir /azp \
