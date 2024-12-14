@@ -12,11 +12,11 @@ RUN apt-get update && apt-get install -y \
 # Upgrade all installed packages
 RUN apt-get update && apt-get upgrade -y
 
-# Create a non-root user 'agent' with a home directory and set the UID to 1000
+# Create a non-root user 'agent' with a home directory and set the shell
 RUN useradd -m -s /bin/bash agent
 
-# Install Docker group and add the agent user to the docker group to allow Docker access
-RUN groupadd docker && usermod -aG docker agent
+# Add the 'agent' user to the 'docker' group (no need to create the docker group)
+RUN usermod -aG docker agent
 
 # Download and install the Azure DevOps agent
 RUN mkdir /azp \
@@ -30,6 +30,12 @@ WORKDIR /azp
 
 # Switch to the 'agent' user for the rest of the operations
 USER agent
+
+# Set environment variables for the agent configuration (these will need to be set at runtime)
+ENV AZP_URL=""
+ENV AZP_TOKEN=""
+ENV AZP_AGENT_NAME="docker-agent"
+ENV AZP_POOL="Default"
 
 # Run the configuration script when the container starts
 ENTRYPOINT ["./config.sh"]
