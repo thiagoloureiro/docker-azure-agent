@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get upgrade -y
 
 # Create a non-root user 'agent' with a home directory and set the UID to 1000
-RUN useradd -m -u 1000 -s /bin/bash agent
+RUN useradd -m -s /bin/bash agent
 
 # Install Docker group and add the agent user to the docker group to allow Docker access
 RUN groupadd docker && usermod -aG docker agent
