@@ -2,8 +2,7 @@ FROM ubuntu:latest
 ENV TARGETARCH="linux-x64"
 # Also can be "linux-arm", "linux-arm64".
 
-RUN apt update
-RUN apt upgrade -y
+RUN apt-get update && apt-get upgrade -y
 RUN apt install -y curl git jq libicu70
 
 WORKDIR /azp/
