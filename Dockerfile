@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     jq \
     curl \
     docker.io \
+    libicu-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade all installed packages
