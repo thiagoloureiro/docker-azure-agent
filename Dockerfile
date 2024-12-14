@@ -3,7 +3,7 @@ FROM alpine:latest
 
 # Install dependencies and tools
 RUN apk add --no-cache bash jq curl docker
-RUN apk update && apk-upgrade -y
+RUN apk update && apk upgrade -y
 
 # Create a non-root user 'agent' and set as the user for running the agent
 RUN adduser -D -u 1000 agent
