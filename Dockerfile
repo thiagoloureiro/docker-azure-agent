@@ -15,6 +15,12 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Set python3.11 as the default python3
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+
+# Create a symbolic link for python to point to python3.11
+RUN ln -s /usr/bin/python3.11 /usr/bin/python
+
 WORKDIR /azp/
 
 COPY ./start.sh ./
