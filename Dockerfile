@@ -9,7 +9,7 @@ RUN apt install -y curl git jq libicu74
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     wget \
-    make \  # Install make
+    make \
     && add-apt-repository ppa:deadsnakes/ppa \
     && apt-get update \
     && apt-get install -y python3.11 python3.11-venv python3.11-dev \
