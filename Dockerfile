@@ -6,6 +6,15 @@ RUN apt update
 RUN apt upgrade -y
 RUN apt install -y curl git jq libicu74
 
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    wget \
+    && add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get update \
+    && apt-get install -y python3.11 python3.11-venv python3.11-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /azp/
 
 COPY ./start.sh ./
