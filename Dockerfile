@@ -21,6 +21,7 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && \
     rm get-pip.py
 
 RUN pip install uvicorn
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Set python3.11 as the default python3
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
