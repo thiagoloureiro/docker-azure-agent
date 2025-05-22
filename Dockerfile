@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM docker:dind
 ENV TARGETARCH="linux-x64"
 # Also can be "linux-arm", "linux-arm64".
 
