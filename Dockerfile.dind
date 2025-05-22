@@ -24,7 +24,7 @@ RUN chmod +x ./start.sh
 
 # Create agent user and set up home directory
 RUN adduser -D -h /home/agent agent
-#RUN chown -R agent:agent /azp /home/agent
+RUN chown -R agent:agent /azp /home/agent
 
 USER agent
 # Another option is to run the agent as root.
