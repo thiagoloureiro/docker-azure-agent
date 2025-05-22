@@ -19,8 +19,8 @@ RUN apk add --no-cache \
 
 WORKDIR /azp/
 
-COPY ./start-alpine.sh ./
-RUN chmod +x ./start-alpine.sh
+COPY ./start.sh ./
+RUN chmod +x ./start.sh
 
 # Create agent user and set up home directory
 RUN adduser -D -h /home/agent agent
@@ -30,4 +30,4 @@ USER agent
 # Another option is to run the agent as root.
 #ENV AGENT_ALLOW_RUNASROOT="true"
 
-ENTRYPOINT [ "./start-alpine.sh" ]
+ENTRYPOINT [ "./start.sh" ]
