@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     make \
      ca-certificates \
+     chromium-browser \
         fonts-liberation \
         libasound2t64 \
         libatk-bridge2.0-0 \
