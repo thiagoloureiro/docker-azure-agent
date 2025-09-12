@@ -57,6 +57,7 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && \
     rm get-pip.py
 
 RUN pip install uvicorn
+RUN pip install youtube-transcript-api
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Set python3.11 as the default python3
