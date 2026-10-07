@@ -16,6 +16,8 @@ RUN /opt/az/bin/python3 -m pip install --no-cache-dir --upgrade --no-deps --root
  && /opt/az/bin/python3 -c 'import importlib.metadata as m; dists = [d for d in m.distributions() if (d.metadata["Name"] or "").lower() == "pyjwt"]; versions = [d.version for d in dists]; assert versions == ["2.15.1"], versions' \
  && az version
 
+RUN python -m pip uninstall --yes pip && rm -rf /root/.cache/pip
+
 WORKDIR /azp/
 
 COPY ./start.sh ./
