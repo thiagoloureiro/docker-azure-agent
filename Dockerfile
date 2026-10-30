@@ -6,6 +6,26 @@ RUN apt update && \
   apt upgrade -y && \
   apt install -y curl git jq libicu74
 
+# Helm 4.3.1. The published checksum is a bare sha256, verified before install.
+RUN set -eux; \
+    arch="$(dpkg --print-architecture)"; \
+    case "$arch" in \
+      amd64) helm_arch=amd64 ;; \
+      arm64) helm_arch=arm64 ;; \
+      armhf) helm_arch=arm ;; \
+      *) echo "unsupported architecture: $arch" >&2; exit 1 ;; \
+    esac; \
+    version=4.3.1; \
+    file="helm-v${version}-linux-${helm_arch}.tar.gz"; \
+    curl -fsSL -o "/tmp/${file}" "https://get.helm.sh/${file}"; \
+    curl -fsSL -o "/tmp/${file}.sha256" "https://get.helm.sh/${file}.sha256"; \
+    printf '%s  %s\n' "$(tr -d '[:space:]' < "/tmp/${file}.sha256")" "/tmp/${file}" | sha256sum -c -; \
+    tar -C /tmp -xzf "/tmp/${file}"; \
+    mv "/tmp/linux-${helm_arch}/helm" /usr/local/bin/helm; \
+    chmod 755 /usr/local/bin/helm; \
+    rm -rf "/tmp/${file}" "/tmp/${file}.sha256" "/tmp/linux-${helm_arch}"; \
+    helm version
+
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
