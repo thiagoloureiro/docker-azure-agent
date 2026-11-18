@@ -45,6 +45,8 @@ for dist in m.distributions():
 assert found == {name: [version] for name, version in expected.items()}, found
 PY
 
+RUN /opt/az/bin/python3  -m pip uninstall --yes pip && rm -rf /root/.cache/pip
+
 WORKDIR /azp/
 
 COPY ./start.sh ./
