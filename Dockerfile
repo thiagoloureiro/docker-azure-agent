@@ -9,16 +9,41 @@ RUN apt update && \
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
-# Azure CLI vendors these in /opt/az (PyJWT 2.13.0/2.15.0, oauthlib 3.2.2).
-# 2.15.1 and 4.0.1 clear the current advisories, including CVE-2026-118669
-# and CVE-2026-49272. --no-deps keeps the rest of the CLI pin set.
-RUN /opt/az/bin/python3 -m pip install --no-cache-dir --upgrade --no-deps --root-user-action=ignore \
+# Azure CLI vendors pinned copies of these in /opt/az. pyOpenSSL 26.2.0
+# rejects cryptography newer than 48, so 26.4.0 has to move with it.
+# cryptography 50.0.2, urllib3 2.8.0, and setuptools 84.2.1 clear the
+# current advisories (CVE-2026-69247, GHSA-8988-9cw3-xx77, CVE-2026-59890).
+RUN /opt/az/bin/python3 -m pip install --no-cache-dir --upgrade --root-user-action=ignore \
       'PyJWT==2.15.1' \
       'oauthlib==4.0.1' \
- && /opt/az/bin/python3 -c 'import importlib.metadata as m; import oauthlib, requests_oauthlib; expected={"pyjwt":"2.15.1","oauthlib":"4.0.1"}; found={}; \
-[found.setdefault((d.metadata["Name"] or "").lower(), []).append(d.version) for d in m.distributions() if (d.metadata["Name"] or "").lower() in expected]; \
-assert found=={k:[v] for k,v in expected.items()}, found' \
- && az version
+      'cryptography==50.0.2' \
+      'pyOpenSSL==26.4.0' \
+      'urllib3==2.8.0' \
+      'setuptools==84.2.1' \
+ && az version \
+ && /opt/az/bin/python3 - <<'PY'
+import importlib.metadata as m
+import oauthlib
+import requests_oauthlib
+import setuptools
+import urllib3
+from OpenSSL import SSL
+
+expected = {
+    "pyjwt": "2.15.1",
+    "oauthlib": "4.0.1",
+    "cryptography": "50.0.2",
+    "pyopenssl": "26.4.0",
+    "urllib3": "2.8.0",
+    "setuptools": "84.2.1",
+}
+found = {}
+for dist in m.distributions():
+    name = (dist.metadata["Name"] or "").lower()
+    if name in expected:
+        found.setdefault(name, []).append(dist.version)
+assert found == {name: [version] for name, version in expected.items()}, found
+PY
 
 WORKDIR /azp/
 
